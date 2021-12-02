@@ -10,6 +10,6 @@ fun main() {
  *
  * After pairing all values with the next value we can count the amount of times when a < b to get the final answer
  */
-fun solveDayOnePartOne(input: List<Int>) = input.zipWithNext().count { it.first < it.second }
+fun solveDayOnePartOne(input: List<Int>) = input.zipWithNext().count { (a, b) -> a < b }
 
 fun solveDayOnePartTwo(input: List<Int>) = input.windowed(3).map(Iterable<Int>::sum)
