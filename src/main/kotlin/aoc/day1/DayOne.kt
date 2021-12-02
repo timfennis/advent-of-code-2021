@@ -1,8 +1,8 @@
 package aoc.day1
 
 fun main() {
-    println(solveDayOnePartOne(dayOneInput))
-    println(solveDayOnePartOne(solveDayOnePartTwo(dayOneInput)))
+    println("Solution: " + solveDayOnePartOne(dayOneInput) + ", 1448 expected")
+    println("Solution: " + solveDayOnePartOne(solveDayOnePartTwo(dayOneInput)) + ", 1471 expected")
 }
 
 /**
@@ -12,7 +12,4 @@ fun main() {
  */
 fun solveDayOnePartOne(input: List<Int>) = input.zipWithNext().count { it.first < it.second }
 
-/**
- * Applying zipWithNext twice and discarding the second pair first value (b.first) essentially gives us the sliding window we need.
- */
-fun solveDayOnePartTwo(input: List<Int>) = input.zipWithNext().zipWithNext { a, b -> a.first + a.second + b.second }
+fun solveDayOnePartTwo(input: List<Int>) = input.windowed(3).map(Iterable<Int>::sum)
