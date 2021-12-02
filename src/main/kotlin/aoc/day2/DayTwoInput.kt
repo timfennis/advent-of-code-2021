@@ -1,4 +1,4 @@
-package oac.day2
+package aoc.day2
 
 enum class Direction {
     FORWARD, DOWN, UP;

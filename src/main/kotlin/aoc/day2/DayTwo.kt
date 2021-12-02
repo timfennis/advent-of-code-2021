@@ -1,4 +1,4 @@
-package oac.day2
+package aoc.day2
 
 fun main() {
     // The same process input function uses different modifier functions to get to the result
