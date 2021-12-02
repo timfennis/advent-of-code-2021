@@ -2001,4 +2001,4 @@ val dayOneInput = """
 6293
 6297
 6308
-""".split("\n").map { it.toIntOrNull() }.filterNotNull()
+""".split("\n").mapNotNull { it.toIntOrNull() }
