@@ -12,4 +12,4 @@ fun main() {
  */
 fun solveDayOnePartOne(input: List<Int>) = input.zipWithNext().count { (a, b) -> a < b }
 
-fun solveDayOnePartTwo(input: List<Int>) = input.windowed(3).map(Iterable<Int>::sum)
+fun solveDayOnePartTwo(input: List<Int>) = input.windowed(3).map { it.sum() }
