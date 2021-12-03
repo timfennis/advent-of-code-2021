@@ -33,25 +33,24 @@ fun calculateLifeSupportRating(a: String, b: String) = a.binaryStringToLong() * 
 // Support functions
 //
 
-fun bitsAt(input: Input, offset: Int): Collection<Char> = input.map { it[offset] }
-
 fun mostCommonBitAtOffset(input: Input, offset: Int) =
-    if (bitsAt(input, offset).count { it == '1' } >= (input.size / 2.0)) '1' else '0'
+    input.groupingBy { it[offset] }.eachCount().maxWithOrNull(comparator)!!.key
 
 fun leastCommonBitAtOffset(input: Input, offset: Int) =
-    if (bitsAt(input, offset).count { it == '0' } <= (input.size / 2.0)) '0' else '1'
+    input.groupingBy { it[offset] }.eachCount().minWithOrNull(comparator)!!.key
 
-fun findRating(input: Input, filter: (Input, Int) -> Char, offset: Int = 0): String = if (input.size == 1) {
+tailrec fun findRating(input: Input, filterForOffset: (Input, Int) -> Char, offset: Int = 0): String = if (input.size == 1) {
     input.first()
 } else {
-    findRating(filterOnPosition(input, offset, filter(input, offset)), filter, offset + 1)
+    // Filter the values that have the bit at the given position and tail recursively repeat for the next position
+    findRating(input.filter { it[offset] == filterForOffset(input, offset) }, filterForOffset, offset + 1)
 }
-
-fun filterOnPosition(input: Input, offset: Int, filter: Char) = input.filter { it[offset] == filter }
 
 //
 // Helper extension functions
 //
+
+private val comparator: Comparator<Map.Entry<Char, Int>> = compareBy({ it.value }, { it.key })
 
 fun String.binaryStringToLong() = this.toLong(2)
 fun Pair<Long, Long>.toPowerConsumption() = this.first * this.second
