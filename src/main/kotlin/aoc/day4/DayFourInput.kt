@@ -1,5 +1,11 @@
 package aoc.day4
 
+fun List<String>.toBoards(): List<Board> = if (this.isEmpty()) emptyList() else
+    listOf(Board.fromInts(this.take(5).map { it.splitToNumbers() })) + this.drop(5).toBoards()
+
+fun String.splitToNumbers() = this.split(" ").toNumbers()
+fun List<String>.toNumbers() = this.mapNotNull { it.toIntOrNull() }
+
 val numbers = "10,80,6,69,22,99,63,92,30,67,28,93,0,50,65,87,38,7,91,60,57,40,84,51,27,12,44,88,64,35,39,74,61,55,31,48,81,89,62,37,94,43,29,14,95,8,78,49,90,97,66,70,25,68,75,45,42,23,9,96,56,72,59,32,85,3,71,79,18,24,33,19,15,20,82,26,21,13,4,98,83,34,86,5,2,73,17,54,1,77,52,58,76,36,16,46,41,47,11,53".split(",").toNumbers()
 val boards = """
  3 82 18 50 90
@@ -630,28 +636,3 @@ val exampleBoards = """
     .split("\n")
     .filter { it.trim() != "" }
     .toBoards()
-
-
-fun List<String>.toBoards(): List<Board> = if (this.isEmpty()) emptyList() else
-    listOf(Board.fromInts(this.take(5).map { it.splitToNumbers() })) + this.drop(5).toBoards()
-
-class Board(private val rows: List<List<Pair<Int, Boolean>>>) {
-
-    companion object {
-        fun fromInts(rows: List<List<Int>>) = Board(rows.map { it.map { num -> Pair(num, false) } })
-    }
-
-    fun withMarked(num: Int): Board = Board(rows.map { row -> row.map { if (it.first == num) Pair(it.first, true) else Pair(it.first, it.second) } })
-    fun hasBingo(): Boolean = hasRowBingo() || hasColumnBingo()
-
-    fun hasRowBingo(): Boolean = rows.any { row -> row.all { (_, m) -> m } }
-    private fun hasColumnBingo() = rotate().hasRowBingo()
-
-    fun score() = rows.flatten().sumOf { if (!it.second) it.first else 0 }
-    private fun rotate(): Board = Board((0 until 5).map{ col -> (0 until 5).map{ row -> rows[row][col] }})
-
-    override fun toString() = "\n BOARD \n" + rows.joinToString("\n") { row -> row.joinToString { if (it.second) "*" + it.first else it.first.toString() } } + "\n"
-}
-
-fun String.splitToNumbers() = this.split(" ").toNumbers()
-fun List<String>.toNumbers() = this.mapNotNull { it.toIntOrNull() }
