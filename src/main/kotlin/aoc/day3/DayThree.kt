@@ -1,15 +1,9 @@
 package aoc.day3
 
 fun main() {
-    runOnInput(dayThreeExampleInput)
-    println("\n-------------------\n")
-    runOnInput(dayThreeInput)
-}
-
-fun runOnInput(input: Input) {
-    val gammaAndEpsilon = calculateGammaAndEpsilon(input)
-    val oxygenGeneratorRating = findOxygenGeneratorRating(input)
-    val cO2ScrubberRating = findCO2ScrubberRating(input)
+    val gammaAndEpsilon = calculateGammaAndEpsilon(dayThreeInput)
+    val oxygenGeneratorRating = findOxygenGeneratorRating(dayThreeInput)
+    val cO2ScrubberRating = findCO2ScrubberRating(dayThreeInput)
     val lifeSupportRating = calculateLifeSupportRating(oxygenGeneratorRating, cO2ScrubberRating)
 
     println("Gamma and Epsilon: $gammaAndEpsilon")
@@ -29,9 +23,7 @@ fun calculateGammaAndEpsilon(input: Input) = Pair(
 
 fun calculateLifeSupportRating(a: String, b: String) = a.binaryStringToLong() * b.binaryStringToLong()
 
-//
 // Support functions
-//
 
 fun mostCommonBitAtOffset(input: Input, offset: Int) =
     input.groupingBy { it[offset] }.eachCount().maxWithOrNull(comparator)!!.key
@@ -46,12 +38,11 @@ tailrec fun findRating(input: Input, filterForOffset: (Input, Int) -> Char, offs
     findRating(input.filter { it[offset] == filterForOffset(input, offset) }, filterForOffset, offset + 1)
 }
 
-//
 // Helper extension functions
-//
 
 private val comparator: Comparator<Map.Entry<Char, Int>> = compareBy({ it.value }, { it.key })
 
 fun String.binaryStringToLong() = this.toLong(2)
 fun Pair<Long, Long>.toPowerConsumption() = this.first * this.second
 fun List<Char>.join() = this.joinToString("")
+
