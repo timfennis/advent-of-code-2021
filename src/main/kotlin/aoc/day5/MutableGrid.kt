@@ -1,7 +1,9 @@
 package aoc.day5
 
 /**
- * Optimized version of grid that simply mutates its internal representation
+ * Optimized version of grid that simply mutates its internal representation/
+ *
+ * The mutable grid breaks the rules from README.md but the immutable version was just too slow
  */
 class MutableGrid(private val width: Int, height: Int)
 {
