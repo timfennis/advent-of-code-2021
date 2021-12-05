@@ -21,6 +21,8 @@ fun main() {
         .count { it.value >= 2 }
 
     println(points2)
+
+
 }
 
 fun <A,B> Map<A,B>.mergeWith(other: Map<A,B>, merger: (B?, B?) -> B): Map<A,B> = (this.keys + other.keys).associateWith { key -> merger(this[key], other[key]) }
