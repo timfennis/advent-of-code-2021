@@ -1,7 +1,9 @@
 package aoc.day5
 
 /**
- * If only I had realised sooner that this is possible
+ * If only I had realised sooner that this is possible.
+ *
+ * In hindsight this is a lot worse than DayFiveSuperOptimized.kt
  */
 fun main() {
     // Mutable
