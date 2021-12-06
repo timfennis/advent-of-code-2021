@@ -3,22 +3,30 @@ package aoc.day6
 import aoc.simpleMeasureTest
 
 fun main() {
-    simpleMeasureTest(prefix = "Immutable Map") {
-        solveWithMap()
+    val days = 256
+
+    simpleMeasureTest(iterations = 1000, testCount = 10, warmCount = 2, prefix = "Immutable Map") {
+        solveWithMap(days)
     }
 
-    println("Immutable Map: " + solveWithMap())
+    println("Immutable Map: " + solveWithMap(days))
 
-    simpleMeasureTest(prefix = "ArrayDeque") {
-        solveWithQueue()
+    simpleMeasureTest(iterations = 1000, testCount = 10, warmCount = 2, prefix = "ArrayDeque") {
+        solveWithQueue(days)
     }
 
-    println("ArrayDeque: " + solveWithQueue())
+    println("ArrayDeque: " + solveWithQueue(days))
+
+    simpleMeasureTest(iterations = 1000, testCount = 10, warmCount = 2, prefix = "Recursion") {
+        solveRecursive(days)
+    }
+
+    println("Recursion: " + solveRecursive(days))
 }
 
-fun solveWithMap() = solveDays(daySixInput
+fun solveWithMap(days: Int) = solveDays(daySixInput
     .groupBy { it }
-    .mapValues { it.value.size.toLong() }, 256)
+    .mapValues { it.value.size.toLong() }, days)
     .map { it.value }
     .sum()
 

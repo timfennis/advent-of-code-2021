@@ -12,7 +12,7 @@ fun createFishQueue() = ArrayDeque<Long>().apply {
     }
 }
 
-fun solveWithQueue(): Long = solveDays(createFishQueue(), 256).sum()
+fun solveWithQueue(days: Int): Long = solveDays(createFishQueue(), days).sum()
 
 tailrec fun solveDays(fish: ArrayDeque<Long>, days: Int): ArrayDeque<Long> =
     if (days == 0) {

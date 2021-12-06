@@ -42,8 +42,8 @@ fun simpleMeasureTest(
 
     results.sort()
 
-    val average = totalTime / testCount
-    val median = results[results.size / 2]
+    val average = totalTime.toDouble() / testCount.toDouble() / iterations.toDouble()
+    val median = results[results.size / 2].toDouble() / iterations.toDouble()
 
     println("$printPrefix -> average=${average}ms / median=${median}ms")
 }
