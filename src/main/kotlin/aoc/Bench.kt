@@ -4,35 +4,37 @@ import java.util.ArrayList
 
 
 /**
- * Iterates provided by [callback] code [ITERATIONS]x[TEST_COUNT] times.
- * Performs warming by iterating [ITERATIONS]x[WARM_COUNT] times.
+ * Iterates provided by [callback] code [iterations]x[testCount] times.
+ * Performs warming by iterating [iterations]x[warmCount] times.
  */
 fun simpleMeasureTest(
-    ITERATIONS: Int = 1000,
-    TEST_COUNT: Int = 10,
-    WARM_COUNT: Int = 2,
+    iterations: Int = 1000,
+    testCount: Int = 10,
+    warmCount: Int = 2,
+    prefix: String = "Test",
     callback: ()->Unit
 ) {
     val results = ArrayList<Long>()
     var totalTime = 0L
     var t = 0
 
-    println("$PRINT_REFIX -> go")
+    val printPrefix = "[$prefix]"
+    println("$printPrefix -> go")
 
-    while (++t <= TEST_COUNT + WARM_COUNT) {
+    while (++t <= testCount + warmCount) {
         val startTime = System.currentTimeMillis()
 
         var i = 0
-        while (i++ < ITERATIONS)
+        while (i++ < iterations)
             callback()
 
-        if (t <= WARM_COUNT) {
-            println("$PRINT_REFIX Warming $t of $WARM_COUNT")
+        if (t <= warmCount) {
+            println("$printPrefix Warming $t of $warmCount")
             continue
         }
 
         val time = System.currentTimeMillis() - startTime
-        println(PRINT_REFIX+" "+time.toString()+"ms")
+        println(printPrefix+" "+time.toString()+"ms")
 
         results.add(time)
         totalTime += time
@@ -40,13 +42,8 @@ fun simpleMeasureTest(
 
     results.sort()
 
-    val average = totalTime / TEST_COUNT
+    val average = totalTime / testCount
     val median = results[results.size / 2]
 
-    println("$PRINT_REFIX -> average=${average}ms / median=${median}ms")
+    println("$printPrefix -> average=${average}ms / median=${median}ms")
 }
-
-/**
- * Used to filter console messages easily
- */
-private val PRINT_REFIX = "[TimeTest]"

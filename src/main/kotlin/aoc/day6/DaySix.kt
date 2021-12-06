@@ -3,31 +3,30 @@ package aoc.day6
 import aoc.simpleMeasureTest
 
 fun main() {
-    simpleMeasureTest {
+    simpleMeasureTest(prefix = "Immutable Map") {
         solveWithMap()
     }
 
-    println("Map: " + solveWithMap())
+    println("Immutable Map: " + solveWithMap())
 
-
-    simpleMeasureTest {
+    simpleMeasureTest(prefix = "ArrayDeque") {
         solveWithQueue()
     }
 
-    println("Queue: " + solveWithQueue())
+    println("ArrayDeque: " + solveWithQueue())
 }
 
-fun solveWithMap() = recOptimized(daySixInput
+fun solveWithMap() = solveDays(daySixInput
     .groupBy { it }
     .mapValues { it.value.size.toLong() }, 256)
     .map { it.value }
     .sum()
 
-tailrec fun recOptimized(fish: Map<Int, Long>, days: Int): Map<Int, Long> =
+tailrec fun solveDays(fish: Map<Int, Long>, days: Int): Map<Int, Long> =
     if (days == 0) {
         fish
     } else {
-        recOptimized(
+        solveDays(
             mapOf(
                 0 to (fish[1] ?: 0),
                 1 to (fish[2] ?: 0),
@@ -49,7 +48,7 @@ tailrec fun recOptimized(fish: Map<Int, Long>, days: Int): Map<Int, Long> =
 
 tailrec fun recOriginal(fish: List<Int>, days: Int): List<Int> =
     if (days == 0) {
-        fish;
+        fish
     } else {
         recOriginal(fish.flatMap(::grow), days - 1)
     }
