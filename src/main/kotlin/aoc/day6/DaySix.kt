@@ -1,13 +1,27 @@
 package aoc.day6
 
-fun main() {
+import aoc.simpleMeasureTest
 
-    println(recOptimized(daySixInput
-        .groupBy { it }
-        .mapValues { it.value.size.toLong() }, 256)
-        .map { it.value }
-        .sum())
+fun main() {
+    simpleMeasureTest {
+        solveWithMap()
+    }
+
+    println("Map: " + solveWithMap())
+
+
+    simpleMeasureTest {
+        solveWithQueue()
+    }
+
+    println("Queue: " + solveWithQueue())
 }
+
+fun solveWithMap() = recOptimized(daySixInput
+    .groupBy { it }
+    .mapValues { it.value.size.toLong() }, 256)
+    .map { it.value }
+    .sum()
 
 tailrec fun recOptimized(fish: Map<Int, Long>, days: Int): Map<Int, Long> =
     if (days == 0) {
