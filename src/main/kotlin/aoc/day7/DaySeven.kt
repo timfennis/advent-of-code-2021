@@ -5,7 +5,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 
-fun main () {
+fun main() {
     println(solve(examplePositions, ::calcPartOneCost))
     println(solve(daySevenPositions, ::calcPartOneCost))
 
@@ -14,7 +14,7 @@ fun main () {
 }
 
 fun solve(input: List<Int>, calculator: (List<Int>, Int) -> Int) =
-    (input.minByOrNull { it }!! .. input.maxByOrNull { it }!!)
+    (input.minOf { it }..input.maxOf { it })
         .map { it to calculator(input, it) }
         .minByOrNull { (_, cost) -> cost }
 
@@ -31,4 +31,4 @@ fun triangleNumber(n: Int) = ((n * n) + n) / 2
  * but after googling for "Factorial with addition" I found the triangleNumber formula
  */
 val factorialButWithAddition = ::_factorialButWithAddition.memoize()
-fun _factorialButWithAddition(n: Int):  Int = if (n == 0) 0 else n + _factorialButWithAddition(n - 1)
+fun _factorialButWithAddition(n: Int): Int = if (n == 0) 0 else n + _factorialButWithAddition(n - 1)
