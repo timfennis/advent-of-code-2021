@@ -1,6 +1,7 @@
 package aoc.day7
 
 import arrow.core.memoize
+import kotlin.math.absoluteValue
 import kotlin.math.max
 import kotlin.math.min
 
@@ -19,10 +20,10 @@ fun solve(input: List<Int>, calculator: (List<Int>, Int) -> Int) =
         .minByOrNull { (_, cost) -> cost }
 
 fun calcPartOneCost(input: List<Int>, position: Int) =
-    input.sumOf { max(it, position) - min(it, position) }
+    input.sumOf {  (it - position).absoluteValue }
 
 fun calcPartTwoCost(input: List<Int>, position: Int) =
-    input.sumOf { triangleNumber(max(it, position) - min(it, position)) }
+    input.sumOf { triangleNumber((it - position).absoluteValue) }
 
 fun triangleNumber(n: Int) = ((n * n) + n) / 2
 
@@ -31,4 +32,5 @@ fun triangleNumber(n: Int) = ((n * n) + n) / 2
  * but after googling for "Factorial with addition" I found the triangleNumber formula
  */
 val factorialButWithAddition = ::_factorialButWithAddition.memoize()
+
 fun _factorialButWithAddition(n: Int): Int = if (n == 0) 0 else n + _factorialButWithAddition(n - 1)
