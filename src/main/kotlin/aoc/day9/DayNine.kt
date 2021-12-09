@@ -14,7 +14,6 @@ fun solvePartOne(input: Grid) = findLowPoints(input).sumOf { it.second + 1 }
 fun solvePartTwo(input: Grid) = findLowPoints(input)
     .map { calculateBasinSize(input, setOf(it.first)) }
     .sortedDescending()
-    .apply { println(this) }
     .take(3)
     .reduce { acc, i -> acc * i }
 
