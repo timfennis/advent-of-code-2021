@@ -40,3 +40,19 @@ tailrec fun calculateBasinSize(input: Grid, offsetsInBasin: Set<Int>): Int {
         calculateBasinSize(input, newOffsets)
     }
 }
+
+data class Grid(val width: Int, val height: Int, val rows: List<Int>) {
+    fun getNeighbours(currentIndex: Int) = listOf(
+        if (currentIndex % width == 0) 9 else rows.getOrNull(currentIndex - 1) ?: 9,
+        if (currentIndex % width == (width - 1)) 9 else rows.getOrNull(currentIndex + 1) ?: 9,
+        rows.getOrNull(currentIndex - width) ?: 9,
+        rows.getOrNull(currentIndex + width) ?: 9,
+    )
+
+    fun getNeighbourOffsets(currentIndex: Int) = listOfNotNull(
+        if (currentIndex % width == 0) null else currentIndex - 1,
+        if (currentIndex % width == (width - 1)) null else currentIndex + 1,
+        if (currentIndex > width) currentIndex - width else null,
+        if (currentIndex + width < rows.size) currentIndex + width else null,
+    )
+}
