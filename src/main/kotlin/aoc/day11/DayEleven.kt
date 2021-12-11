@@ -13,8 +13,7 @@ class DayEleven : Day(11) {
     override fun solvePartOne(input: String): Long = simulateTimes(Data(0L, 0L, parseInput(input)), 100).flashes
 
     override fun solvePartTwo(input: String): Long =
-        simulateUntilSynchronized(Data(0L, 0L, parseInput(input))).steps.toLong()
-
+        simulateUntilSynchronized(Data(0L, 0L, parseInput(input))).steps
 }
 
 private fun parseInput(input: String): List<List<Int>> =
@@ -31,20 +30,23 @@ private tailrec fun simulateUntilSynchronized(data: Data): Data = if (data.isSyn
 
 data class Data(val flashes: Long, val steps: Long, val grid: List<List<Int>>) {
 
-    fun simulateOneGeneration() = this.incremented().flashed().capped().copy(steps = steps + 1)
+    fun simulateOneGeneration() = this.incremented().flashed().copy(steps = steps + 1)
 
     fun isSynchronized() = grid.flatten().all { grid.first().first() == it }
 
     private fun incremented() = Data(this.flashes, this.steps, grid.map { xs -> xs.map { v -> v + 1 } })
+
     private fun flashed(): Data =
-        coordinates().fold(this) { me, (x, y) -> if (me.grid[y][x] in (10 until 99)) me.flashAt(x, y) else me }
+        coordinates().fold(this) { me, (x, y) -> if (me.grid[y][x] >= 10) me.flashAt(x, y) else me }
+
     private fun flashAt(x: Int, y: Int): Data = Data(
         flashes = flashes + 1,
         steps = steps,
-        grid = neighbours(x, y).fold(grid.updated(x, y, 100)) { grid, (x, y) -> grid.incremented(x, y) }
+        grid = neighbours(x, y)
+            .filterNot { (xx, yy) ->  grid[yy][xx] == 0 }
+            .fold(grid.updated(x, y, 0)) { grid, (xx, yy) -> grid.incremented(xx, yy) }
     ).flashed()
 
-    private fun capped(): Data = Data(flashes, steps, grid.map { xs -> xs.map { if (it >= 10) 0 else it } })
     private fun coordinates() = (grid.indices).map { y -> (grid.indices).map { x -> x to y } }.flatten()
 
     override fun toString() =
