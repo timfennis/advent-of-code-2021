@@ -36,3 +36,5 @@ fun List<Long>.median(): Long =
             sorted[(sorted.size / 2)]
         }
     }
+
+fun <T> List<T>.updated(index: Int, value: T) = this.mapIndexed { currentIndex, currentValue -> if(currentIndex == index) value else currentValue  }

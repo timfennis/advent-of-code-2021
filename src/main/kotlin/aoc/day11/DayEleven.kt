@@ -1,89 +1,70 @@
+@file:Suppress("SameParameterValue")
+
 package aoc.day11
 
 import aoc.Day
 import aoc.splitLines
+import aoc.updated
 
 class DayEleven : Day(11) {
 
     override val exampleSolution = listOf(1656L, 195L)
 
-    override fun solvePartOne(input: String): Long = simulateTimes(Data(0L, parseInput(input)), 100).flashes
+    override fun solvePartOne(input: String): Long = simulateTimes(Data(0L, 0L, parseInput(input)), 100).flashes
 
-    override fun solvePartTwo(input: String): Long = simulateUntilSynchronized(Data(0L, parseInput(input))).steps.toLong()
+    override fun solvePartTwo(input: String): Long =
+        simulateUntilSynchronized(Data(0L, 0L, parseInput(input))).steps.toLong()
 
 }
-
 
 private fun parseInput(input: String): List<List<Int>> =
     input.splitLines().map { line -> line.map { char -> char.digitToInt() } }
 
-private fun simulateTimes(data: Data, steps: Int): Data = (0 until steps).fold(data) { d, _ -> d.stepAll(); d }
+private fun simulateTimes(data: Data, steps: Int): Data =
+    (0 until steps).fold(data) { d, _ -> d.simulateOneGeneration() }
+
 private tailrec fun simulateUntilSynchronized(data: Data): Data = if (data.isSynchronized()) {
     data
 } else {
-    data.stepAll()
-    simulateUntilSynchronized(data)
+    simulateUntilSynchronized(data.simulateOneGeneration())
 }
 
-class Data(var flashes: Long, grid: List<List<Int>>) {
-    private val grid = grid.map { it.toMutableList() }.toMutableList()
-    var steps = 0
+data class Data(val flashes: Long, val steps: Long, val grid: List<List<Int>>) {
 
-    // fun incremented() = Grid(grid.map { xs -> xs.map { v -> v + 1 } })
-
-    fun stepAll() {
-        steps++
-
-        // Increment all
-        grid.forEachIndexed { y, xs -> xs.forEachIndexed { x, _ -> grid[y][x]++ } }
-
-        // Flash all
-        grid.forEachIndexed { y, xs -> xs.forEachIndexed { x, _ -> flash(x, y) } }
-
-        // Cap zero
-        grid.forEachIndexed { y, xs -> xs.forEachIndexed { x, _ -> if (grid[y][x] > 9) grid[y][x] = 0 } }
-    }
+    fun simulateOneGeneration() = this.incremented().flashed().capped().copy(steps = steps + 1)
 
     fun isSynchronized() = grid.flatten().all { grid.first().first() == it }
 
-    private fun inc(x: Int, y: Int) {
-        grid.getOrNull(y)?.getOrNull(x)?.let {
-            grid[y][x]++
-        }
-    }
+    private fun incremented() = Data(this.flashes, this.steps, grid.map { xs -> xs.map { v -> v + 1 } })
+    private fun flashed(): Data =
+        coordinates().fold(this) { me, (x, y) -> if (me.grid[y][x] in (10 until 99)) me.flashAt(x, y) else me }
+    private fun flashAt(x: Int, y: Int): Data = Data(
+        flashes = flashes + 1,
+        steps = steps,
+        grid = neighbours(x, y).fold(grid.updated(x, y, 100)) { grid, (x, y) -> grid.incremented(x, y) }
+    ).flashed()
 
-    private fun flash(x: Int, y: Int) {
-        grid.getOrNull(y)?.getOrNull(x)?.let {
-            if (grid[y][x] in 10..98) {
-                grid[y][x] = 99
-                flashes++
+    private fun capped(): Data = Data(flashes, steps, grid.map { xs -> xs.map { if (it >= 10) 0 else it } })
+    private fun coordinates() = (grid.indices).map { y -> (grid.indices).map { x -> x to y } }.flatten()
 
-                inc(x - 1, y - 1);
-                inc(x, y - 1);
-                inc(x + 1, y - 1);
-
-                inc(x - 1, y);
-                //  Middle value remains
-                inc(x + 1, y);
-
-                inc(x - 1, y + 1);
-                inc(x, y + 1);
-                inc(x + 1, y + 1);
-
-                flash(x - 1, y - 1);
-                flash(x, y - 1);
-                flash(x + 1, y - 1);
-
-                flash(x - 1, y);
-                //  Middle value remains
-                flash(x + 1, y);
-
-                flash(x - 1, y + 1);
-                flash(x, y + 1);
-                flash(x + 1, y + 1);
-            }
-        }
-    }
-
-    override fun toString() = grid.joinToString("\n") { xs -> xs.joinToString("") }
+    override fun toString() =
+        "[Generation: $steps, Flashes: $flashes, Hash: ${this.hashCode()}]\n" + grid.joinToString("\n") { xs -> xs.joinToString("") }
 }
+
+private fun neighbours(x: Int, y: Int) = listOf(
+    x - 1 to y - 1,
+    x to y - 1,
+    x + 1 to y - 1,
+
+    x - 1 to y,
+    // Exclude the element itself
+    // x to y,
+    x + 1 to y,
+
+    x - 1 to y + 1,
+    x to y + 1,
+    x + 1 to y + 1,
+).filter { (x, y) -> x in (0 until 10) && y in (0 until 10) }
+
+fun List<List<Int>>.updated(x: Int, y: Int, value: Int) = this.updated(y, this[y].updated(x, value))
+fun List<List<Int>>.incremented(x: Int, y: Int) = this.updated(y, this[y].updated(x, this[y][x] + 1))
