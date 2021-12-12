@@ -2,11 +2,13 @@ package aoc
 
 import aoc.day10.DayTen
 import aoc.day11.DayEleven
+import aoc.day12.DayTwelve
 import java.io.File
 
 private val days = listOf(
     DayTen(),
-    DayEleven()
+    DayEleven(),
+    DayTwelve(),
 )
 
 
@@ -16,13 +18,13 @@ fun main () {
 
 fun runDay(day: Day) {
     val exampleInput = File("input/day${day.number}_example").readText()
-
-    if (runExamplePart(day, 1, day.solvePartOne(exampleInput))) return
-    if (runExamplePart(day, 2, day.solvePartTwo(exampleInput))) return
-
     val input = File("input/day${day.number}").readText()
 
+    if (runExamplePart(day, 1, day.solvePartOne(exampleInput))) return
     println("Day[${day.number}] part 1: ${day.solvePartOne(input)}")
+
+    if (runExamplePart(day, 2, day.solvePartTwo(exampleInput))) return
+
     println("Day[${day.number}] part 2: ${day.solvePartTwo(input)}")
 }
 
