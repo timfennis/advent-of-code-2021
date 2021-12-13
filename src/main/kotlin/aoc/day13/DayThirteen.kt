@@ -32,16 +32,9 @@ class DayThirteen : Day(13) {
         .let { -1L }
 }
 
-private fun String.toPoints() =
-    this.splitLines().map { Point(it.split(',').first().toInt(), it.split(',').last().toInt()) }.toSet()
-
-private fun String.toFolds() =
-    this.splitLines().map { Fold(it.split('=').first().last(), it.split('=').last().toInt()) }
-
 private fun applyFold(set: Set<Point>, fold: Fold) =
     set.fold(emptySet<Point>()) { points, point -> points + point.foldedOver(fold) }
 
-data class InputData(val points: Set<Point>, val folds: List<Fold>)
 data class Fold(val direction: Char, val coordinate: Int) {
     fun flipped() = Fold(if (direction == 'x') 'y' else 'x', coordinate)
 }
@@ -56,6 +49,13 @@ data class Point(val x: Int, val y: Int) {
     } else {
         this.flipped().foldedOver(fold.flipped()).flipped()
     }
-
     fun flipped() = Point(y, x)
 }
+
+data class InputData(val points: Set<Point>, val folds: List<Fold>)
+
+private fun String.toPoints() =
+    this.splitLines().map { Point(it.split(',').first().toInt(), it.split(',').last().toInt()) }.toSet()
+
+private fun String.toFolds() =
+    this.splitLines().map { Fold(it.split('=').first().last(), it.split('=').last().toInt()) }
