@@ -39,34 +39,23 @@ private fun String.toFolds() =
     this.splitLines().map { Fold(it.split('=').first().last(), it.split('=').last().toInt()) }
 
 private fun applyFold(set: Set<Point>, fold: Fold) =
-    set.fold(emptySet<Point>()) { points, point -> points + point.foldOver(fold) }
+    set.fold(emptySet<Point>()) { points, point -> points + point.foldedOver(fold) }
 
 data class InputData(val points: Set<Point>, val folds: List<Fold>)
-data class Fold(val direction: Char, val coordinate: Int)
+data class Fold(val direction: Char, val coordinate: Int) {
+    fun flipped() = Fold(if (direction == 'x') 'y' else 'x', coordinate)
+}
 
 data class Point(val x: Int, val y: Int) {
-
-    fun foldOver(fold: Fold): Set<Point> = if (fold.direction == 'x') {
-        if (fold.coordinate == this.x) {
-            // This case never actually happens on the input data
-            emptySet()
+    fun foldedOver(fold: Fold): Point = if (fold.direction == 'x') {
+        if (this.x > fold.coordinate) {
+            Point(fold.coordinate - (this.x - fold.coordinate), this.y)
         } else {
-            if (this.x > fold.coordinate) {
-                setOf(Point(fold.coordinate - (this.x - fold.coordinate), this.y))
-            } else {
-                setOf(this)
-            }
+            this
         }
     } else {
-        if (fold.coordinate == this.y) {
-            // This case never actually happens on the input data
-            emptySet()
-        } else {
-            if (this.y > fold.coordinate) {
-                setOf(Point(this.x, fold.coordinate - (this.y - fold.coordinate)))
-            } else {
-                setOf(this)
-            }
-        }
+        this.flipped().foldedOver(fold.flipped()).flipped()
     }
+
+    fun flipped() = Point(y, x)
 }
