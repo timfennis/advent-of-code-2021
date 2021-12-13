@@ -21,9 +21,11 @@ class DayThirteen : Day(13) {
 
         }
         .also {
-            println((0..5).joinToString("\n") { y ->
-                (0..40).joinToString("") { x ->
-                    if (it.contains(Point(x, y))) "█" else " "
+            val ym = it.maxOf { p -> p.y }
+            val xm = it.maxOf { p -> p.x }
+            println((0..ym).joinToString("\n") { y ->
+                (0..xm).joinToString("") { x ->
+                    if (it.contains(Point(x, y))) "█" else "░"
                 }
             })
         }
@@ -41,6 +43,7 @@ private fun applyFold(set: Set<Point>, fold: Fold) =
 
 data class InputData(val points: Set<Point>, val folds: List<Fold>)
 data class Fold(val direction: Char, val coordinate: Int)
+
 data class Point(val x: Int, val y: Int) {
 
     fun foldOver(fold: Fold): Set<Point> = if (fold.direction == 'x') {

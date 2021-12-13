@@ -38,10 +38,9 @@ private fun runExamplePart(day: Day, part: Int, solution: Long): Boolean {
     } else {
         println(" correct")
     }
+
     return false
 }
-
-
 
 abstract class Day(val number: Int) {
     open val exampleSolution = listOf(-1L, -1L)
