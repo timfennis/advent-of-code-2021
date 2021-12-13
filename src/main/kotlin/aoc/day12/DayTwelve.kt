@@ -7,30 +7,27 @@ class DayTwelve : Day(12) {
     override val exampleSolution = listOf(10L, 36L)
     override fun solvePartOne(input: String): Long = input.splitLines()
         .map { toEdge(it) }
-        .let { findAllPaths(it) }
+        .let { findAllPathsPartOne(it) }
         .count()
         .toLong()
 
     override fun solvePartTwo(input: String): Long = input.splitLines()
         .map { toEdge(it) }
-        .let { findAllPaths2(it) }
-        .map { xs -> xs.joinToString(",") { it.name } }
-        .also { println(it.joinToString("\n") ) }
+        .let { findPathsPartTwo(it) }
         .count()
         .toLong()
-
 }
 
-fun findAllPaths(edges: List<Edge>): List<List<Vertex>> {
-    return findAllPaths(edges, listOf(listOf(Vertex("start"))))
+fun findAllPathsPartOne(edges: List<Edge>): List<List<Vertex>> {
+    return findAllPathsPartOne(edges, listOf(listOf(Vertex("start"))))
 }
 
-fun findAllPaths(edges: List<Edge>, currentPaths: List<List<Vertex>>): List<List<Vertex>> {
+fun findAllPathsPartOne(edges: List<Edge>, currentPaths: List<List<Vertex>>): List<List<Vertex>> {
     if (currentPaths.all { path -> path.last().isEnd() }) {
         return currentPaths
     }
 
-    return findAllPaths(edges, currentPaths
+    return findAllPathsPartOne(edges, currentPaths
         .flatMap { currentPath ->
             if (currentPath.last().isEnd()) {
                 listOf(currentPath)
@@ -44,16 +41,16 @@ fun findAllPaths(edges: List<Edge>, currentPaths: List<List<Vertex>>): List<List
         })
 }
 
-fun findAllPaths2(edges: List<Edge>): List<List<Vertex>> {
-    return findAllPaths2(edges, listOf(listOf(Vertex("start"))))
+fun findPathsPartTwo(edges: List<Edge>): List<List<Vertex>> {
+    return findPathsPartTwo(edges, listOf(listOf(Vertex("start"))))
 }
 
-fun findAllPaths2(edges: List<Edge>, currentPaths: List<List<Vertex>>): List<List<Vertex>> {
+fun findPathsPartTwo(edges: List<Edge>, currentPaths: List<List<Vertex>>): List<List<Vertex>> {
     if (currentPaths.all { path -> path.last().isEnd() }) {
         return currentPaths
     }
 
-    return findAllPaths2(edges, currentPaths
+    return findPathsPartTwo(edges, currentPaths
         .flatMap { currentPath ->
             if (currentPath.last().isEnd()) {
                 listOf(currentPath)
@@ -67,10 +64,10 @@ fun findAllPaths2(edges: List<Edge>, currentPaths: List<List<Vertex>>): List<Lis
         })
 }
 
-fun List<Vertex>.containsSmallNodeTwice() = this.filter { it.isSmall() }.groupBy { it }.any { (v, other) -> other.size >= 2 }
+fun List<Vertex>.containsSmallNodeTwice() =
+    this.filter { it.isSmall() }.groupBy { it }.any { (_, other) -> other.size >= 2 }
+
 fun List<Vertex>.allowedDoubles() = if (this.containsSmallNodeTwice()) 1 else 2
-
-
 
 fun toEdge(input: String) = Edge(Vertex(input.split('-').first()), Vertex(input.split('-').last()))
 

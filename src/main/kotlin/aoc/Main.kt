@@ -3,12 +3,14 @@ package aoc
 import aoc.day10.DayTen
 import aoc.day11.DayEleven
 import aoc.day12.DayTwelve
+import aoc.day13.DayThirteen
 import java.io.File
 
 private val days = listOf(
     DayTen(),
     DayEleven(),
     DayTwelve(),
+    DayThirteen()
 )
 
 
