@@ -38,5 +38,6 @@ fun List<Long>.median(): Long =
     }
 
 fun <T> List<T>.updated(index: Int, value: T) = this.mapIndexed { currentIndex, currentValue -> if(currentIndex == index) value else currentValue  }
+fun <K, V> Map<K, V>.updated(key: K, value: V) = mapOf(key to value) + this.filterNot { (lk, _) -> lk == key }
 
 fun <T> List<T>.cons() = this.first() to this.drop(1)
