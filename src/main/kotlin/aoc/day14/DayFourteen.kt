@@ -20,10 +20,13 @@ class DayFourteen : Day(14) {
 
 }
 
+typealias Rules = Map<String, String>
+typealias FreqMap = Map<String, Long>
+
 // -----------------------------------------
 // Part one
 
-private fun solvePartOne(template: String, rules: Map<String, String>, steps: Int) =
+private fun solvePartOne(template: String, rules: Rules, steps: Int) =
     expandTemplateWithRules(template, rules, steps)
         .groupBy { char -> char }
         .map { (_, list) -> list.size }
@@ -31,26 +34,25 @@ private fun solvePartOne(template: String, rules: Map<String, String>, steps: In
         .let { list -> list.first() - list.last() }
         .toLong()
 
-private fun expandTemplateWithRules(template: String, rules: Map<String, String>, steps: Int): String =
-    if (steps == 0) {
-        template
-    } else {
-        template
-            .map { it }
-            .zipWithNext()
-            .map { "${it.first}${it.second}" }
-            .fold(template.first().toString()) { res, pair ->
-                res + rules[pair] + pair[1]
-            }
-            .let {
-                expandTemplateWithRules(it, rules, steps - 1)
-            }
-    }
+private tailrec fun expandTemplateWithRules(template: String, rules: Rules, steps: Int): String = when (steps) {
+    0 -> template
+    else ->
+        expandTemplateWithRules(
+            template = template.toPairs()
+                .fold(template.first().toString()) { res, pair ->
+                    res + rules[pair] + pair[1]
+                },
+            rules,
+            steps - 1
+        )
+}
+
+private fun String.toPairs() = this.zipWithNext { a, b -> "$a$b" }
 
 // -----------------------------------------
 // Part two
 
-private fun solvePartTwo(template: String, rules: Map<String, String>, steps: Int) =
+private fun solvePartTwo(template: String, rules: Rules, steps: Int) =
     updateFrequencyMap(toFrequencyMap(template), rules, steps) // Update the frequencies of all pairs a number of times
         .map { (pair, count) -> pair[0] to count } // Count only the first character of each pair
         .groupBy { it.first } // Group by character
@@ -61,32 +63,28 @@ private fun solvePartTwo(template: String, rules: Map<String, String>, steps: In
         .let { list -> list.first().second - list.last().second }
         .toLong()
 
-private tailrec fun updateFrequencyMap(
-    freq: Map<String, Long>,
-    rules: Map<String, String>,
-    steps: Int
-): Map<String, Long> =
-    if (steps == 0) {
-        freq
-    } else {
-        val out =
-            freq.flatMap { (pair, count) -> listOf(rules[pair]!! + pair[1] to count, pair[0] + rules[pair]!! to count) }
+private tailrec fun updateFrequencyMap(freq: FreqMap, rules: Rules, steps: Int): FreqMap = when (steps) {
+    0 -> freq
+    else -> {
+        updateFrequencyMap(
+            freq = freq
+                .flatMap { (pair, count) -> listOf(rules[pair]!! + pair[1] to count, pair[0] + rules[pair]!! to count) }
                 .groupBy { it.first }
-                .mapValues { (_, value) -> value.sumOf { it.second } }
-
-        updateFrequencyMap(out, rules, steps - 1)
+                .mapValues { (_, value) -> value.sumOf { it.second } },
+            rules,
+            steps - 1
+        )
     }
-
+}
 // -----------------------------------------
 // Helper functions
 
-private fun toFrequencyMap(input: String) = input
-    .map { it }
-    .zipWithNext()
-    .groupBy { "${it.first}${it.second}" }
+private fun toFrequencyMap(input: String): FreqMap = input
+    .zipWithNext { a, b -> "$a$b"}
+    .groupBy { it }
     .mapValues { (_, list) -> list.size.toLong() }
 
-private fun parseRules(rules: String) = rules
+private fun parseRules(rulesString: String) = rulesString
     .splitLines()
     .map { it.split(" -> ") }
     .associate { (a, b) -> a to b }
