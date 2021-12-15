@@ -20,20 +20,22 @@ class DayFifteen : Day(15) {
 private fun enlargeMap(ys: List<List<Int>>): List<List<Int>> {
     val something = ys.map { xs -> (0..4).fold(emptyList<Int>()) { acc, i -> acc + enlargeRowTimes(xs, i) } }
 
-    return (0..4).fold(emptyList<List<Int>>()) { acc, i -> acc + something.map { enlargeRowTimes(it, i) }}
+    return (0..4).fold(emptyList()) { acc, i -> acc + something.map { enlargeRowTimes(it, i) } }
 }
 
-
-private fun enlargeRowTimes(xs: List<Int>, times: Int): List<Int> = when (times) {
+private tailrec fun enlargeRowTimes(xs: List<Int>, times: Int): List<Int> = when (times) {
     0 -> xs
     1 -> enlargeRow(xs)
     else -> enlargeRowTimes(enlargeRow(xs), times - 1)
 }
 
-private fun enlargeRow(xs: List<Int>) = xs.map { new -> when (new + 1) {
-    10 -> 1
-    else -> new + 1
-} }
+private fun enlargeRow(xs: List<Int>) = xs.map { new ->
+    when (new + 1) {
+        10 -> 1
+        else -> new + 1
+    }
+}
+
 private fun parseInput(input: String) = input.splitLines()
     .map { it.map { char -> char.digitToInt() } }
 
@@ -41,11 +43,15 @@ private tailrec fun solveRecursive(input: List<List<Int>>, grid: Map<Point, Int>
     val w = input.first().size
     val h = input.size
 
-    val newGrid = grid.flatMap { (point, cost) ->
-        getNeighbours(x = point.first, y = point.second, input.first().size, input.size)
-            .map { (x, y) -> (x to y) to input[y][x] + cost }
-    }
-        .plus(grid.toList())
+    val newGrid = grid
+        .flatMap { (point, cost) ->
+            getNeighbours(
+                x = point.first,
+                y = point.second,
+                input.first().size,
+                input.size
+            ).map { (x, y) -> (x to y) to input[y][x] + cost } + listOf(point to cost)
+        }
         .groupBy { it.first }
         .mapValues { (_, value) -> value.minOf { pp -> pp.second } }
         .toMap()
