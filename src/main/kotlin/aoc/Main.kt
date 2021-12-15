@@ -5,6 +5,7 @@ import aoc.day11.DayEleven
 import aoc.day12.DayTwelve
 import aoc.day13.DayThirteen
 import aoc.day14.DayFourteen
+import aoc.day15.DayFifteen
 import java.io.File
 
 private val days = listOf(
@@ -12,11 +13,12 @@ private val days = listOf(
     DayEleven(),
     DayTwelve(),
     DayThirteen(),
-    DayFourteen()
+    DayFourteen(),
+    DayFifteen()
 )
 
 
-fun main () {
+fun main() {
     runDay(days.last())
 }
 
@@ -28,6 +30,10 @@ fun runDay(day: Day) {
     println("Day[${day.number}] part 1: ${day.solvePartOne(input)}")
 
     if (runExamplePart(day, 2, day.solvePartTwo(exampleInput))) return
+
+//    simpleMeasureTest {
+//        day.solvePartTwo(input)
+//    }
 
     println("Day[${day.number}] part 2: ${day.solvePartTwo(input)}")
 }

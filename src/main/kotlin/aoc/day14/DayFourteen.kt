@@ -13,7 +13,6 @@ class DayFourteen : Day(14) {
         .let { (template, rules) -> template to parseRules(rules) }
         .let { (template, rules) -> solvePartOne(template, rules, 10) }
 
-
     override fun solvePartTwo(input: String) = input.split("\n\n")
         .let { (template, rules) -> template to parseRules(rules) }
         .let { (template, rules) -> solvePartTwo(template, rules, 40) }
