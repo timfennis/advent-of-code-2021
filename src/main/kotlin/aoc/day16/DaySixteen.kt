@@ -121,6 +121,6 @@ private fun <T> String.readBitsWith(amount: Int, mapper: (String) -> T): Pair<T,
 private fun <A> Pair<A, String>.readBits(amount: Int) = this.readBitsWith(amount) { it }
 
 private fun <A, T> Pair<A, String>.readBitsWith(amount: Int, mapper: (String) -> T) = this.second.readBits(amount)
-    .mapFirst { Pair(this.first, mapper(this.second)) }
+    .mapFirst { inner -> Pair(this.first, mapper(inner)) }
 
 private fun <A, B, C> Pair<Pair<A, B>, C>.toTriple() = Triple(this.first.first, this.first.second, this.second)
