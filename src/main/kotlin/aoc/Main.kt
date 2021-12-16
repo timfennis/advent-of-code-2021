@@ -6,6 +6,7 @@ import aoc.day12.DayTwelve
 import aoc.day13.DayThirteen
 import aoc.day14.DayFourteen
 import aoc.day15.DayFifteen
+import aoc.day16.DaySixteen
 import java.io.File
 
 private val days = listOf(
@@ -14,7 +15,8 @@ private val days = listOf(
     DayTwelve(),
     DayThirteen(),
     DayFourteen(),
-    DayFifteen()
+    DayFifteen(),
+    DaySixteen(),
 )
 
 

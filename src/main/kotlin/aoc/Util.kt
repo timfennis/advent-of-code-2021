@@ -41,3 +41,8 @@ fun <T> List<T>.updated(index: Int, value: T) = this.mapIndexed { currentIndex, 
 fun <K, V> Map<K, V>.updated(key: K, value: V) = mapOf(key to value) + this.filterNot { (lk, _) -> lk == key }
 
 fun <T> List<T>.cons() = this.first() to this.drop(1)
+fun String.binaryStringToLong() = this.toLong(2)
+fun String.binaryStringToInt() = this.toInt(2)
+
+fun <A, B, C> Pair<A, B>.mapFirst(mapper: (A) -> C) = Pair(mapper(this.first), this.second)
+fun <A, B, C> Pair<A, B>.mapSecond(mapper: (B) -> C) = Pair(this.first, mapper(this.second))

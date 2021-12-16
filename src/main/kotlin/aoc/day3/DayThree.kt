@@ -1,5 +1,7 @@
 package aoc.day3
 
+import aoc.binaryStringToLong
+
 fun main() {
     val gammaAndEpsilon = calculateGammaAndEpsilon(dayThreeInput)
     val oxygenGeneratorRating = findOxygenGeneratorRating(dayThreeInput)
@@ -42,7 +44,7 @@ tailrec fun findRating(input: Input, filterForOffset: (Input, Int) -> Char, offs
 
 private val comparator: Comparator<Map.Entry<Char, Int>> = compareBy({ it.value }, { it.key })
 
-fun String.binaryStringToLong() = this.toLong(2)
+
 fun Pair<Long, Long>.toPowerConsumption() = this.first * this.second
 fun List<Char>.join() = this.joinToString("")
 
