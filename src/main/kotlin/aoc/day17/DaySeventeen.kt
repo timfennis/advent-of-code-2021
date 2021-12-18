@@ -1,6 +1,7 @@
 package aoc.day17
 
 import aoc.Day
+import arrow.core.memoize
 import kotlin.math.abs
 import kotlin.math.max
 
@@ -25,7 +26,9 @@ private fun generateVectors(maxX: Int, minY: Int, maxY: Int) =
             (minY..maxY).map { y -> Vector(x, y) }
         }
 
-private fun bruteForce(area: Area) =
+private val bruteForce = ::bruteForceInternal.memoize()
+
+private fun bruteForceInternal(area: Area) =
     generateVectors(area.x.last, area.y.first, max(abs(area.y.first), abs(area.y.last)))
         .map { simulateProbe(Probe.fromTrajectory(it), area) }
         .flatMap { (bool, probe) -> if (bool) listOf(probe) else emptyList() }
@@ -39,6 +42,7 @@ private fun simulateProbe(probe: Probe, area: Area): Pair<Boolean, Probe> = when
 }
 
 private val regex = "x=([\\-0-9]+)\\.\\.([\\-0-9]+), y=([\\-0-9]+)\\.\\.([\\-0-9]+)".toRegex()
+
 private fun parseInput(input: String): Area {
     val values = regex.find(input)!!.groupValues.drop(1).map { it.toInt() }
     return Area(values[0]..values[1], values[2]..values[3])

@@ -8,6 +8,8 @@ import aoc.day14.DayFourteen
 import aoc.day15.DayFifteen
 import aoc.day16.DaySixteen
 import aoc.day17.DaySeventeen
+import aoc.day18.DayEighteen
+import aoc.day18.DayEighteenFromScratch
 import java.io.File
 
 private val days = listOf(
@@ -19,6 +21,8 @@ private val days = listOf(
     DayFifteen(),
     DaySixteen(),
     DaySeventeen(),
+    DayEighteen(),
+    DayEighteenFromScratch(),
 )
 
 
@@ -27,6 +31,9 @@ fun main() {
 }
 
 fun runDay(day: Day) {
+    println("Day[${day.number}] tests")
+    day.test()
+
     val exampleInput = File("input/day${day.number}_example").readText()
     val input = File("input/day${day.number}").readText()
 
@@ -56,6 +63,8 @@ private fun runExamplePart(day: Day, part: Int, solution: Long): Boolean {
 
 abstract class Day(val number: Int) {
     open val exampleSolution = listOf(-1L, -1L)
+
+    open fun test() { println("No tests defined for day $number") }
 
     abstract fun solvePartOne(input: String): Long
     abstract fun solvePartTwo(input: String): Long
