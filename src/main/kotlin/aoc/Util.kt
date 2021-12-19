@@ -46,3 +46,12 @@ fun String.binaryStringToInt() = this.toInt(2)
 
 fun <A, B, C> Pair<A, B>.mapFirst(mapper: (A) -> C) = Pair(mapper(this.first), this.second)
 fun <A, B, C> Pair<A, B>.mapSecond(mapper: (B) -> C) = Pair(this.first, mapper(this.second))
+
+
+fun <A, B> Collection<A>.combinations(other: Collection<B>): Collection<Pair<A, B>> {
+    return this.flatMapIndexed { index, a ->
+        other.drop(index).map { b ->
+            a to b
+        }
+    }
+}

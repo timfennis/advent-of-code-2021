@@ -6,16 +6,12 @@ import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.system.exitProcess
 
-class DayEighteen : Day(18) {
+class DayEighteenTheBrokenVersion : Day(18) {
 
     override val exampleSolution: List<Long> = listOf(4140, -1)
 
     @Suppress("UNREACHABLE_CODE")
     override fun test() {
-        val problem = parse("[[[[0,[4,5]],[0,0]],[[[4,5],[2,6]],[9,5]]],[7,[[[3,7],[4,3]],[[6,3],[8,8]]]]]")
-            .reduce()
-        println("PROBLEM: " + problem)
-        exitProcess(1)
 
         // Check example addition
         val result = parse("[1,2]") + parse("[[3,4],5]")
@@ -76,7 +72,7 @@ class DayEighteen : Day(18) {
         )
 
         println("---- LARGER EXAMPLE ----")
-        val final = stringers.map { parse(it) }.reduce { acc, num -> println("Current acc: $acc"); acc + num }
+        val final = stringers.map { parse(it) }.reduce { acc, num -> println("Current acc: $acc + $num"); acc + num }
         println("Final $final")
         println("Magnitude: ${final.magnitude()}")
     }
@@ -95,8 +91,8 @@ fun sumList(list: List<String>) = list.map { parse(it) }.reduce { acc, num -> ac
 
 sealed class SnailNum {
     abstract fun reduce(): SnailNum
-    abstract fun split(): SnailNum
-    abstract fun reduceWithCarry(depth: Int = 1): Reduction
+    abstract fun splitOnce(): Split
+    abstract fun explodeOnce(depth: Int = 1): Explosion
     abstract fun withLeftCarry(carry: Int): SnailNum
     abstract fun withRightCarry(carry: Int): SnailNum
     abstract operator fun plus(other: SnailNum): SnailNum
@@ -111,18 +107,12 @@ data class SnailReal(val v: Int) : SnailNum() {
 
     override fun reduce() = this
 
-    override fun split() = when {
-        v > 9 -> SnailPair(SnailReal(floor(v / 2.0).toInt()), SnailReal(ceil(v / 2.0).toInt()))
-        else -> this
+    override fun splitOnce() = when {
+        v > 9 -> Split(SnailPair(SnailReal(floor(v / 2.0).toInt()), SnailReal(ceil(v / 2.0).toInt())), true)
+        else -> Split(this, false)
     }
 
-    override fun reduceWithCarry(depth: Int) = when {
-        v > 9 -> Reduction(
-            num = SnailPair(SnailReal(floor(v / 2.0).toInt()), SnailReal(ceil(v / 2.0).toInt())),
-            split = true
-        )
-        else -> Reduction(this)
-    }
+    override fun explodeOnce(depth: Int) = Explosion(this, 0, 0, false)
 
     override fun withLeftCarry(carry: Int) = SnailReal(v + carry)
     override fun withRightCarry(carry: Int) = SnailReal(v + carry)
@@ -154,19 +144,33 @@ data class SnailPair(val l: SnailNum, val r: SnailNum) : SnailNum() {
     override fun toInt() = throw RuntimeException("Cannot convert SnailPair to Int")
 
     override fun reduce(): SnailNum {
-        println("Reducing: $this")
-        val (new, _, _, hasSplit, hasExploded) = this.reduceWithCarry(1)
-        println(if(hasSplit) "Split $new" else "Exploded $new")
+        val (exploded, _, _, hasExploded) = this.explodeOnce()
 
-
-        return if (new.toString() == this.toString()) {
-            new
-        } else {
-            new.reduce()
+        if (hasExploded) {
+            return exploded.reduce()
         }
+
+        val (split, hasSplit) = this.splitOnce()
+
+        if(hasSplit) {
+            return split.reduce()
+        }
+
+        return split
     }
 
-    override fun split() = SnailPair(l.split(), r.split())
+    override fun splitOnce(): Split {
+        val (newLeft, leftHasSplit) = l.splitOnce()
+
+        if (leftHasSplit) {
+            return Split(SnailPair(newLeft, r), true);
+        }
+
+        val (newRight, rightHasSplit) = r.splitOnce()
+
+        return Split(SnailPair(l, newRight), rightHasSplit)
+    }
+
 
     override fun withLeftCarry(carry: Int) = when {
         r is SnailReal -> SnailPair(l, r + carry)
@@ -178,25 +182,24 @@ data class SnailPair(val l: SnailNum, val r: SnailNum) : SnailNum() {
         else -> SnailPair(l.withRightCarry(carry), r)
     }
 
-    override fun reduceWithCarry(depth: Int): Reduction = when {
+    override fun explodeOnce(depth: Int) = when {
         depth == 5 && l is SnailReal && r is SnailReal -> {
-            Reduction(SnailReal.Zero, l.v, r.v, exploded = true)
+            Explosion(SnailReal.Zero, l.v, r.v, true)
         }
         depth <= 4 -> {
-            val (leftNum, leftCarryFromLeft, rightCarryFromLeft, leftHasSplit, leftHasExploded) = this.l.reduceWithCarry(depth + 1)
+            val (leftNum, leftCarryFromLeft, rightCarryFromLeft, leftHasExploded) = this.l.explodeOnce(depth + 1)
 
             // If left has been reduced abort the right side and just return nothing
-            val (rightNum, leftCarryFromRight, rightCarryFromRight, rightHasSplit, rightHasExploded) = if (leftHasSplit || leftHasExploded) {
-                Reduction(this.r, 0, 0, leftHasSplit, leftHasExploded)
+            val (rightNum, leftCarryFromRight, rightCarryFromRight, rightHasExploded) = if (leftCarryFromLeft > 0 || rightCarryFromLeft > 0) {
+                Explosion(this.r, 0, 0, true)
             } else {
-                this.r.reduceWithCarry(depth + 1)
+                this.r.explodeOnce(depth + 1)
             }
 
-            Reduction(
+            Explosion(
                 SnailPair(leftNum.withLeftCarry(leftCarryFromRight), rightNum.withRightCarry(rightCarryFromLeft)),
                 leftCarryFromLeft,
                 rightCarryFromRight,
-                leftHasSplit or rightHasSplit,
                 leftHasExploded or rightHasExploded
             )
         }
@@ -206,10 +209,9 @@ data class SnailPair(val l: SnailNum, val r: SnailNum) : SnailNum() {
 
 class IncompleteSnailPair(val l: SnailNum) : SnailNum() {
     override fun reduce() = throw RuntimeException("Cannot reduce IncompleteSnailPair")
-    override fun split() = throw RuntimeException("Cannot split IncompleteSnailPair")
+    override fun splitOnce() = throw RuntimeException("Cannot splitOnce IncompleteSnailPair")
     override fun magnitude() = throw RuntimeException("Cannot magnitude IncompleteSnailPair")
-    override fun reduceWithCarry(depth: Int): Reduction =
-        throw RuntimeException("Cannot reduceWithCarry IncompleteSnailPair")
+    override fun explodeOnce(depth: Int) = throw RuntimeException("Cannot reduceWithCarry IncompleteSnailPair")
 
     override fun withLeftCarry(carry: Int): SnailNum =
         throw RuntimeException("Cannot withLeftCarry IncompleteSnailPair")
@@ -223,10 +225,9 @@ class IncompleteSnailPair(val l: SnailNum) : SnailNum() {
 
 object EmptySnailPair : SnailNum() {
     override fun reduce() = throw RuntimeException("Cannot reduce EmptySnailPair")
-    override fun split() = throw RuntimeException("Cannot split IncompleteSnailPair")
+    override fun splitOnce() = throw RuntimeException("Cannot splitOnce IncompleteSnailPair")
     override fun magnitude() = throw RuntimeException("Cannot magnitude IncompleteSnailPair")
-    override fun reduceWithCarry(depth: Int): Reduction =
-        throw RuntimeException("Cannot reduceWithCarry EmptySnailPair")
+    override fun explodeOnce(depth: Int) = throw RuntimeException("Cannot reduceWithCarry EmptySnailPair")
 
     override fun withLeftCarry(carry: Int): SnailNum = throw RuntimeException("Cannot withLeftCarry EmptySnailPair")
     override fun withRightCarry(carry: Int): SnailNum = throw RuntimeException("Cannot withRightCarry EmptySnailPair")
@@ -234,5 +235,5 @@ object EmptySnailPair : SnailNum() {
     override fun toInt() = throw RuntimeException("Cannot toInt EmptySnailPair")
 }
 
-data class Reduction(val num: SnailNum, val leftCarry: Int = 0, val rightCarry: Int = 0, val split: Boolean = false, val exploded: Boolean = false) {
-}
+data class Explosion(val num: SnailNum, val leftCarry: Int = 0, val rightCarry: Int = 0, val hasExploded: Boolean = false)
+data class Split(val nem: SnailNum, val hasSplit: Boolean = false)

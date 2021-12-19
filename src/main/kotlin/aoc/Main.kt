@@ -8,8 +8,9 @@ import aoc.day14.DayFourteen
 import aoc.day15.DayFifteen
 import aoc.day16.DaySixteen
 import aoc.day17.DaySeventeen
-import aoc.day18.DayEighteen
-import aoc.day18.DayEighteenFromScratch
+import aoc.day18.DayEighteenTheBrokenVersion
+import aoc.day18.DayEighteenRegex
+import aoc.day19.DayNineteen
 import java.io.File
 
 private val days = listOf(
@@ -21,8 +22,9 @@ private val days = listOf(
     DayFifteen(),
     DaySixteen(),
     DaySeventeen(),
-    DayEighteen(),
-    DayEighteenFromScratch(),
+    DayEighteenRegex(),
+    DayEighteenTheBrokenVersion(),
+    DayNineteen()
 )
 
 

@@ -5,7 +5,7 @@ import aoc.splitLines
 import kotlin.math.ceil
 import kotlin.math.floor
 
-class DayEighteenFromScratch : Day(18) {
+class DayEighteenRegex : Day(18) {
 
     override val exampleSolution: List<Long> = listOf(4140, 3993)
 
@@ -20,22 +20,23 @@ class DayEighteenFromScratch : Day(18) {
 }
 
 
-val regex = "\\[\\d+,\\d+\\]".toRegex()
+val regex = "\\[\\d+,\\d+]".toRegex()
 
 private fun snailAdd(a: String, b: String) = snailReduce("[$a,$b]")
 private fun snailReduce(num: String): String {
-    val a = findExplodePair(num)
-    val b = findSplitNum(num)
+    val explode = findExplodePair(num)
 
-    return when {
-        a != null -> {
-            snailReduce(num.explodeInRange(a))
-        }
-        b != null -> {
-            snailReduce(num.splitInRange(b))
-        }
-        else -> num
+    if (explode != null) {
+        return snailReduce(num.explodeInRange(explode))
     }
+
+    val split = findSplitNum(num)
+
+    if (split != null) {
+        return snailReduce(num.splitInRange(split))
+    }
+
+    return num
 }
 
 private fun findExplodePair(num: String): IntRange? {
@@ -43,8 +44,8 @@ private fun findExplodePair(num: String): IntRange? {
 
     for (pair in allPairs) {
 
-        val open = num.take(pair.range.start + 1).count { it == '[' }
-        val close = num.take(pair.range.start + 1).count { it == ']' }
+        val open = num.take(pair.range.first + 1).count { it == '[' }
+        val close = num.take(pair.range.first + 1).count { it == ']' }
 
         val diff = open - close
 
@@ -71,8 +72,6 @@ private fun findSplitNum(num: String): IntRange? {
 
 val regexNumber = "\\d+".toRegex()
 
-//[[[0,[5,8]],[[1,7],[9,6]]],[[4,[1,2]],[[1,4],2]]]
-//[[[[5,0],[[9,7],[9,6]]],[[4,[1,2]],[[1,4],2]]]]
 private fun String.explodeInRange(range: IntRange): String {
 
     val pair = this.substring(range).snailNumberToPair()
