@@ -6,6 +6,7 @@ import kotlin.math.abs
 val allRotations = ::allRotationsList.memoize()
 
 private fun allRotationsList(point: Point3D): List<Point3D> = allRotationsSequence(point).toList()
+
 private fun allRotationsSequence(point: Point3D): Sequence<Point3D> = sequence {
     var v = point
     for (cycle in 1..2) {
@@ -24,6 +25,7 @@ private fun allRotationsSequence(point: Point3D): Sequence<Point3D> = sequence {
 
 
 data class Point3D(val x: Int, val y: Int, val z: Int) {
+    @Suppress("unused")
     infix fun distanceTo(other: Point3D) = listOf(
         ((this.x - other.x) * (this.x - other.x)),
         ((this.y - other.y) * (this.y - other.y)),

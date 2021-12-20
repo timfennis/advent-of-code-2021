@@ -11,6 +11,7 @@ import aoc.day17.DaySeventeen
 import aoc.day18.DayEighteenTheBrokenVersion
 import aoc.day18.DayEighteenRegex
 import aoc.day19.DayNineteen
+import aoc.day20.DayTwenty
 import java.io.File
 
 private val days = listOf(
@@ -24,7 +25,8 @@ private val days = listOf(
     DaySeventeen(),
     DayEighteenRegex(),
     DayEighteenTheBrokenVersion(),
-    DayNineteen()
+    DayNineteen(),
+    DayTwenty(),
 )
 
 
@@ -70,4 +72,5 @@ abstract class Day(val number: Int) {
 
     abstract fun solvePartOne(input: String): Long
     abstract fun solvePartTwo(input: String): Long
+
 }
