@@ -16,6 +16,7 @@ class DaySixteen : Day(16) {
             check(decodePacket(hexToBin("F600BC2D8F")).first.value() == 0L)
             check(decodePacket(hexToBin("9C0141080250320F1802104A08")).first.value() == 1L)
         }
+        .also { (packet, _) -> println(packet.versions() + " ${packet.versions().size}") }
         .let { (packet, _) -> packet.versionSum() }
         .toLong()
 
@@ -55,6 +56,8 @@ private fun decodePacket(input: String): Pair<Packet, String> {
 
 sealed class Packet(val version: Int, val type: Int) {
     open fun versionSum() = version
+    open fun versions() = listOf(version)
+
     abstract fun value(): Long
 
     override fun toString(): String {
@@ -72,6 +75,8 @@ class LiteralPacket(version: Int, private val decimal: Long) : Packet(version, 4
 
 class OperatorPacket(version: Int, type: Int, private val subPackets: List<Packet>) : Packet(version, type) {
     override fun versionSum() = version + subPackets.sumOf { it.versionSum() }
+    override fun versions() = listOf(version) + subPackets.flatMap { it.versions() }
+
     override fun value(): Long = when (type) {
         0 -> subPackets.sumOf { it.value() }
         1 -> subPackets.fold(1L) { acc, packet -> acc * packet.value() }
