@@ -1,6 +1,8 @@
 package aoc.day22
 
 import aoc.*
+import java.util.*
+import kotlin.math.ceil
 
 class DayTwentyTwo : Day(22) {
 
@@ -17,32 +19,32 @@ private fun solve(instructions: List<Instruction>): Long {
     val ys = instructions.ys().map { it.toLong() }
     val zs = instructions.zs().map { it.toLong() }
 
+    val zlen = ceil(zs.size/8.0).toInt()
+
     val cubes = Array(xs.size) {
         Array(ys.size) {
-            Array(zs.size) {
-                false
-            }
+            BitSet(zlen)
         }
     }
 
     instructions.forEach { inst ->
         val x1 = xs.indexOf(inst.x.first.toLong())
-        val x2 = xs.indexOf(inst.x.last.toLong()+ 1)
+        val x2 = xs.indexOf(inst.x.last.toLong() + 1)
         val y1 = ys.indexOf(inst.y.first.toLong())
-        val y2 = ys.indexOf(inst.y.last.toLong()+ 1)
+        val y2 = ys.indexOf(inst.y.last.toLong() + 1)
         val z1 = zs.indexOf(inst.z.first.toLong())
         val z2 = zs.indexOf(inst.z.last.toLong() + 1)
         // We loop over al the intervals we found above but use until because the last+1 interval is the bound
         (x1 until x2).forEach { x ->
             (y1 until y2).forEach { y ->
                 (z1 until z2).forEach { z ->
-                     cubes[x][y][z] = inst.operation
+                    cubes[x][y][z] = inst.operation
                 }
             }
         }
     }
 
-    var  sum = 0L
+    var sum = 0L
 
     for ((x1, x2) in xs.indices.zipWithNext()) {
         for ((y1, y2) in ys.indices.zipWithNext()) {
