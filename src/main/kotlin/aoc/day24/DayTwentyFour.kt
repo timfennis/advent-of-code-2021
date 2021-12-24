@@ -16,7 +16,7 @@ class DayTwentyFour : Day(24) {
 //        check(computeAluState(parse("inp z\ninp x\nmul z 3\neql z x"), "27").z == 0)
     }
 
-    override fun solvePartOne(input: String) = solve(parse(input))
+    override fun solvePartOne(input: String) = helper(parse(input))
 
     override fun solvePartTwo(input: String): Long {
         TODO("Not yet implemented")
@@ -62,7 +62,9 @@ private fun toFile(instructions: List<Instruction>, input: String) {
 
 
 private fun helper(instructions: List<Instruction>): Long {
-    println(calc(MyInput("11111111111111")) == computeAluState(instructions, "11111111111111").first)
+    println(calcZ(MyInput("11111111111111")) == computeAluState(instructions, "11111111111111").first.z)
+    println(calcZ(MyInput("15495271165446")) == computeAluState(instructions, "15495271165446").first.z)
+    println(calcZ(MyInput("13579246899999")) == computeAluState(instructions, "13579246899999").first.z)
     // toFile(instructions, "15495271165446")
     // toFile(instructions, "13579246899999")
 
@@ -84,12 +86,12 @@ private fun solve(instructions: List<Instruction>): Long {
                 async(Dispatchers.IO) {
 
                     nrGen.map { num ->
-                        val temp = calc(MyInput(prefix.toString() + num.toString()))
+                        val temp = calcZ(MyInput(prefix.toString() + num.toString()))
 
-                        if (temp.z == 0L) {
+                        if (temp == 0L) {
                             println("$num $temp")
                         }
-                        num to temp.z
+                        num to temp
                     }.filter { it.second == 0L }.first().first
                 }
             }.awaitAll()
