@@ -12,6 +12,8 @@ import aoc.day18.DayEighteenRegex
 import aoc.day19.DayNineteen
 import aoc.day20.DayTwenty
 import aoc.day22.DayTwentyTwo
+import aoc.day23.DayTwentyThree
+import aoc.day24.DayTwentyFour
 import java.io.File
 import java.lang.management.MemoryType
 
@@ -34,6 +36,8 @@ private val days = listOf(
     DayNineteen(),
     DayTwenty(),
     DayTwentyTwo(),
+    DayTwentyThree(),
+    DayTwentyFour(),
 )
 
 
@@ -45,17 +49,20 @@ fun runDay(day: Day) {
     println("Day[${day.number}] tests")
     day.test()
 
-    val exampleInput = File("input/day${day.number}_example").readText()
-    val input = File("input/day${day.number}").readText()
+    val ex = File("input/day${day.number}_example")
+    if (ex.exists()) {
+        if (runExamplePart(day, 1, day.solvePartOne(ex.readText()))) return
+    }
 
-    if (runExamplePart(day, 1, day.solvePartOne(exampleInput))) return
+    val inFile = File("input/day${day.number}")
+    val input = if (inFile.exists()) inFile.readText() else ""
+
+
     println("Day[${day.number}] part 1: ${day.solvePartOne(input)}")
 
-    if (runExamplePart(day, 2, day.solvePartTwo(exampleInput))) return
-
-//    simpleMeasureTest {
-//        day.solvePartTwo(input)
-//    }
+    if (ex.exists()) {
+        if (runExamplePart(day, 2, day.solvePartTwo(ex.readText()))) return
+    }
 
     timed {
         println("Day[${day.number}] part 2: ${day.solvePartTwo(input)}")
