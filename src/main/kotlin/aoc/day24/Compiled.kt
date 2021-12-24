@@ -4,9 +4,18 @@ abstract class Input {
     abstract fun next(): Long
 }
 
+fun testOutput () {
+    for (i in 1..9L) {
+        for (j in 1..9L) {
+            println("$i, $j: " + f(j, f(i, 0, 1, 13, 14), 1, 12, 8))
+        }
+
+    }
+}
 fun calcZ(input: Input): Long {
     var z = 0L
-    z = f(input.next(), z, 1, 13, 14)
+
+    z = f(input.next(), z, 1, 13, 14) //  It just adds 1 to 14
     z = f(input.next(), z, 1, 12, 8)
     z = f(input.next(), z, 1, 11, 5)
     z = f(input.next(), z, 26, 0, 4)
@@ -24,11 +33,12 @@ fun calcZ(input: Input): Long {
     return z
 }
 
-private fun f(win: Long, z: Long, p1: Int, p2: Int, p3: Int): Long {
-
-    val mod = (z % 26) + p2
-    val bool = if (mod != win) 1 else 0
-
-    return ((z / p1) * ((25 * bool) + 1)) + ((p3 + win) * bool)
+private fun f(numIn: Long, z: Long, div: Int, p2: Int, p3: Int): Long {
+    val mod = ((z % 26) + p2)
+    return if (mod == numIn) {
+        (z / div)
+    } else {
+        ((z / div) * 26) + (p3 + numIn)
+    }
 }
 

@@ -10,6 +10,7 @@ import java.io.File
 class DayTwentyFour : Day(24) {
 
     override fun test() {
+        testOutput()
 //        check(computeAluState(parse("inp x\nmul x -1"), "5").x == -5)
 //        check(computeAluState(parse("inp z\ninp x\nmul z 3\neql z x"), "39").z == 1)
 //        check(computeAluState(parse("inp z\ninp x\nmul z 3\neql z x"), "38").z == 0)
