@@ -14,6 +14,7 @@ import aoc.day20.DayTwenty
 import aoc.day22.DayTwentyTwo
 import aoc.day23.DayTwentyThree
 import aoc.day24.DayTwentyFour
+import aoc.day25.DayTwentyFive
 import java.io.File
 import java.lang.management.MemoryType
 
@@ -37,6 +38,7 @@ private val days = listOf(
     DayTwenty(),
     DayTwentyTwo(),
     DayTwentyThree(),
+    DayTwentyFive(),
     DayTwentyFour(),
 )
 

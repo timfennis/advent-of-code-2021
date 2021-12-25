@@ -63,9 +63,9 @@ private fun toFile(instructions: List<Instruction>, input: String) {
 
 
 private fun helper(instructions: List<Instruction>): Long {
-    println(calcZ(MyInput("11111111111111")) == computeAluState(instructions, "11111111111111").first.z)
-    println(calcZ(MyInput("15495271165446")) == computeAluState(instructions, "15495271165446").first.z)
-    println(calcZ(MyInput("13579246899999")) == computeAluState(instructions, "13579246899999").first.z)
+//    println(calcZ(MyInput("11111111111111")) == computeAluState(instructions, "11111111111111").first.z)
+//    println(calcZ(MyInput("15495271165446")) == computeAluState(instructions, "15495271165446").first.z)
+//    println(calcZ(MyInput("13579246899999")) == computeAluState(instructions, "13579246899999").first.z)
     // toFile(instructions, "15495271165446")
     // toFile(instructions, "13579246899999")
 
